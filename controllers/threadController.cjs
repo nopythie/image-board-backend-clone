@@ -3,6 +3,8 @@ const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
 const fs = require("@cyclic.sh/s3fs")(process.env.CYCLIC_BUCKET_NAME);
 
 const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
@@ -69,6 +71,22 @@ const createThread = async (req, res) => {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
   const imagePath = req.file.path;
+
+  await s3
+    .putObject({
+      Body: JSON.stringify({ key: "value" }),
+      Bucket: process.env.CYCLIC_BUCKET_NAME,
+      Key: `some_files/${imagePath}`,
+    })
+    .promise();
+  const my_file = await s3
+    .getObject({
+      Bucket: process.env.CYCLIC_BUCKET_NAME,
+      Key: `some_files/${imagePath}`,
+    })
+    .promise();
+  console.log(JSON.parse(my_file));
+
   const result = await validateImageType(imagePath);
   if (!result.ok) {
     console.error(result.error);
