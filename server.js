@@ -28,7 +28,7 @@ mongoose
   .then(() => {
     app.listen(port, () => {
       console.log(`Serveur lancé.`);
-      console.log(S3_BUCKET_NAME);
+      console.log(process.env.S3_BUCKET_NAME);
     });
   })
   .catch((err) => {
