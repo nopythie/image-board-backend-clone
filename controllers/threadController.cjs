@@ -3,7 +3,7 @@ const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
-const fs = require("@cyclic.sh/s3fs")(process.env.S3_BUCKET_NAME);
+const fs = require("@cyclic.sh/s3fs")(process.env.CYCLIC_BUCKET_NAME);
 
 const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
 
