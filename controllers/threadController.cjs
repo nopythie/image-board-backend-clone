@@ -2,8 +2,8 @@ const { validateImageType } = require("../utils/validateImageType.cjs");
 const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
-const fs = require("fs");
-const { idFormat } = require("../utils/idFormat.cjs");
+const fs = require("@cyclic.sh/s3fs");
+
 const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
 
 // GET every threads
