@@ -6,7 +6,7 @@ const threadRoutes = require("./routes/thread.cjs");
 const path = require("path");
 const cors = require("cors");
 const corsOptions = {
-  origin: "https://cemus.github.io/image-board-frontend/",
+  origin: "https://cemus.github.io",
   credentials: true,
   optionSuccessStatus: 200,
 };
