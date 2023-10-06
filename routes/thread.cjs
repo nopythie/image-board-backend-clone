@@ -10,7 +10,7 @@ const {
 } = require("../controllers/threadController.cjs");
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images/");
+    cb(null, "./public/images");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + "-" + file.originalname);
