@@ -1,8 +1,8 @@
 const express = require("express");
 require("dotenv").config();
 const multer = require("multer");
-const { deleteObjects } = require("../utils/emptyS3Bucket.cjs");
-const { S3Client, ListObjectsCommand } = require("@aws-sdk/client-s3");
+const { deleteObjects, listObjects } = require("../utils/s3Utils.cjs");
+const { S3Client } = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
 const s3 = new S3Client();
 const router = express.Router();
@@ -12,10 +12,11 @@ const {
   createThread,
   createReply,
 } = require("../controllers/threadController.cjs");
+const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.CYCLIC_BUCKET_NAME,
+    bucket: bucketName,
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
@@ -25,7 +26,7 @@ const upload = multer({
   }),
 });
 
-deleteObjects(s3, process.env.CYCLIC_BUCKET_NAME);
+listObjects(s3, bucketName);
 
 // GET every threads
 router.get("/", getThreads);
