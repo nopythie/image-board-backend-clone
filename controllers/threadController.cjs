@@ -82,14 +82,21 @@ const createThread = async (req, res) => {
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
-    console.log(imagePath);
+
+    let filename = req.path.slice(1);
+
+    console.log(typeof req.body);
+
     await s3
       .putObject({
-        Body: JSON.stringify(imagePath),
+        Body: JSON.stringify(req.body),
         Bucket: process.env.BUCKET,
-        Key: imagePath,
+        Key: filename,
       })
       .promise();
+
+    res.set("Content-type", "text/plain");
+    res.send("ok").end();
 
     const thread = await Thread.create({
       opName,
