@@ -1,6 +1,7 @@
 const express = require("express");
 require("dotenv").config();
 const multer = require("multer");
+const { deleteObjects } = require("../utils/emptyS3Bucket.cjs");
 const { S3Client, ListObjectsCommand } = require("@aws-sdk/client-s3");
 const multerS3 = require("multer-s3");
 const s3 = new S3Client();
@@ -24,25 +25,7 @@ const upload = multer({
   }),
 });
 
-const listObjects = async (bucketName) => {
-  const params = {
-    Bucket: process.env.CYCLIC_BUCKET_NAME,
-  };
-  const command = new ListObjectsCommand(params);
-  try {
-    const data = await s3.send(command);
-    console.log("Objets dans le bucket:");
-    data.Contents.forEach((object) => {
-      console.log(object.Key);
-    });
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
-
-// Utilisation
-listObjects("nom-de-votre-bucket");
+deleteObjects(s3, process.env.CYCLIC_BUCKET_NAME);
 
 // GET every threads
 router.get("/", getThreads);
