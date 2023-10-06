@@ -4,9 +4,7 @@ const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
-
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+const fs = require("@cyclic.sh/s3fs");
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -64,87 +62,47 @@ const getImage = async (req, res) => {
   });
 };
 
-// POST thread
+//POST a thread
 const createThread = async (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file has been downloaded." });
+  }
+  const imagePath = req.file.path;
+  const result = await validateImageType(imagePath);
+  if (!result.ok) {
+    console.error(result.error);
+    return res.status(400).json({ error: "Invalid file format." });
+  }
+  const metadata = await getImageMetadata(imagePath);
+  const { width, height } = metadata;
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: "No file has been uploaded." });
-    }
-
-    const imagePath = req.file.path;
-    console.log("Image Path:", imagePath);
-    const result = await validateImageType(imagePath);
-
-    if (!result.ok) {
-      console.error(result.error);
-      return res.status(400).json({ error: "Invalid file format." });
-    }
-
-    console.log("Image validée avec succès");
-
-    const metadata = await getImageMetadata(imagePath);
-    const { width, height } = metadata;
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
-
-    console.log("Données métadonnées récupérées");
-
     const thread = await Thread.create({
       opName,
       subject,
       comment,
+      image: imagePath,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
       replies: [],
     });
-
-    console.log("Thread créé");
-
-    // Enregistrement du thread
     await thread.save();
-
-    console.log("Thread enregistré avec succès");
-
-    // Mettre à jour les propriétés bumpDate et formatedId
     thread.bumpDate = thread.createdAt;
     thread.formatedId = await uniqueIdGeneration();
-
-    // Ré-enregistrez le thread
     await thread.save();
 
-    // Vérification du nombre de threads et suppression du plus ancien si nécessaire
     const allThreads = await Thread.find({}).sort({ bumpDate: 1 });
     const maxThreads = 16;
-
     if (allThreads.length > maxThreads) {
       await Thread.findByIdAndDelete(allThreads[0]._id);
     }
 
-    // Envoi de l'image sur S3
-    const filename = req.file.originalname;
-    console.log("Nom de fichier:", filename);
-    await s3
-      .putObject({
-        Body: require("fs").readFileSync(imagePath),
-        Bucket: process.env.BUCKET,
-        Key: filename,
-      })
-      .promise();
-
-    console.log("Image envoyée avec succès sur S3");
-
-    // Mettez à jour le champ image dans la base de données
-    thread.image = filename;
-    await thread.save();
-
-    console.log("Champ image mis à jour dans la base de données");
-
-    // Répondre avec le thread créé
     res.status(200).json(thread);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.log(error);
+    return res.status(400).json({ error: error.message });
   }
 };
 
