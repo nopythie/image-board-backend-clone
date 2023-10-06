@@ -68,9 +68,9 @@ const createThread = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
-  console.log(req);
+  console.log(`Request : ${req}`);
   const imagePath = req.file.location;
-  console.log(imagePath);
+  console.log(`imagePath : ${imagePath}`);
   const result = await validateImageType(imagePath);
   if (!result.ok) {
     console.error(result.error);
