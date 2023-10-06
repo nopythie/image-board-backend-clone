@@ -7,7 +7,6 @@ require("dotenv").config();
 
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
-const bodyParser = require("body-parser");
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -87,17 +86,6 @@ const createThread = async (req, res) => {
 
     console.log(filename);
 
-    await s3
-      .putObject({
-        Body: JSON.stringify(req.body),
-        Bucket: process.env.BUCKET,
-        Key: filename,
-      })
-      .promise();
-
-    res.set("Content-type", "text/plain");
-    res.send("ok").end();
-
     const thread = await Thread.create({
       opName,
       subject,
@@ -111,6 +99,17 @@ const createThread = async (req, res) => {
     await thread.save();
     thread.bumpDate = thread.createdAt;
     thread.formatedId = await uniqueIdGeneration();
+    console.log(req.body);
+    await s3
+      .putObject({
+        Body: JSON.stringify(req.body),
+        Bucket: process.env.BUCKET,
+        Key: thread.formatedId,
+      })
+      .promise();
+
+    res.set("Content-type", "text/plain");
+    res.send("ok").end();
     await thread.save();
 
     const allThreads = await Thread.find({}).sort({ bumpDate: 1 });
