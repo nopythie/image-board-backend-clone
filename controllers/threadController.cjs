@@ -66,62 +66,71 @@ const getImage = async (req, res) => {
 
 // POST thread
 const createThread = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: "No file has been downloaded." });
-  }
-  const imagePath = req.file.path;
-
-  const result = await validateImageType(imagePath);
-  if (!result.ok) {
-    console.error(result.error);
-    return res.status(400).json({ error: "Invalid file format." });
-  }
-  const metadata = await getImageMetadata(imagePath);
-  const { width, height } = metadata;
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file has been uploaded." });
+    }
+
+    const imagePath = req.file.path;
+    const result = await validateImageType(imagePath);
+
+    if (!result.ok) {
+      console.error(result.error);
+      return res.status(400).json({ error: "Invalid file format." });
+    }
+
+    const metadata = await getImageMetadata(imagePath);
+    const { width, height } = metadata;
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
-
-    let filename = req.file.path.slice(1);
-
-    console.log(filename);
 
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: filename,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
       replies: [],
     });
+
+    // Enregistrement du thread
     await thread.save();
+
+    // Mettre à jour les propriétés bumpDate et formatedId
     thread.bumpDate = thread.createdAt;
     thread.formatedId = await uniqueIdGeneration();
-    console.log(req.body);
-    await s3
-      .putObject({
-        Body: JSON.stringify(req.body),
-        Bucket: process.env.BUCKET,
-        Key: thread.formatedId,
-      })
-      .promise();
 
-    res.set("Content-type", "text/plain");
-    res.send("ok").end();
+    // Ré-enregistrez le thread
     await thread.save();
 
+    // Vérification du nombre de threads et suppression du plus ancien si nécessaire
     const allThreads = await Thread.find({}).sort({ bumpDate: 1 });
     const maxThreads = 16;
+
     if (allThreads.length > maxThreads) {
       await Thread.findByIdAndDelete(allThreads[0]._id);
     }
 
+    // Envoi de l'image sur S3
+    const filename = req.file.originalname;
+    await s3
+      .putObject({
+        Body: require("fs").readFileSync(imagePath),
+        Bucket: process.env.BUCKET,
+        Key: filename,
+      })
+      .promise();
+
+    // Mettez à jour le champ image dans la base de données
+    thread.image = filename;
+    await thread.save();
+
+    // Répondre avec le thread créé
     res.status(200).json(thread);
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({ error: error.message });
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
