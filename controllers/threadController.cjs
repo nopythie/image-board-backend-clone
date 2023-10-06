@@ -114,6 +114,7 @@ const createThread = async (req, res) => {
 
     // Envoi de l'image sur S3
     const filename = req.file.originalname;
+    console.log(filename);
     await s3
       .putObject({
         Body: require("fs").readFileSync(imagePath),
