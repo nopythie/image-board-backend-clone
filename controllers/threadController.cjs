@@ -3,8 +3,13 @@ const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+const {
+        Upload
+      } = require("@aws-sdk/lib-storage"),
+      {
+        S3
+      } = require("@aws-sdk/client-s3");
+const s3 = new S3();
 const fs = require("@cyclic.sh/s3fs")(process.env.CYCLIC_BUCKET_NAME);
 
 const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
@@ -90,7 +95,10 @@ const createThread = async (req, res) => {
       ACL: "public-read", // Définir les autorisations (modifiable selon vos besoins)
     };
 
-    const uploadResponse = await s3.upload(uploadParams).promise();
+    const uploadResponse = await new Upload({
+      client: s3,
+      params: uploadParams
+    }).done();
 
     const thread = await Thread.create({
       opName,
