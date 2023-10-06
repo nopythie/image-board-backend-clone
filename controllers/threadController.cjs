@@ -64,6 +64,7 @@ const getImage = async (req, res) => {
 
 //POST a thread
 const createThread = async (req, res) => {
+  console.log("lancement de createThread");
   if (!req.file) {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
