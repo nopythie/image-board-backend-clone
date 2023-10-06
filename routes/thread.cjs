@@ -7,14 +7,7 @@ const {
   createThread,
   createReply,
 } = require("../controllers/threadController.cjs");
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images/");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // GET every threads
