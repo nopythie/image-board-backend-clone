@@ -72,6 +72,7 @@ const createThread = async (req, res) => {
     }
 
     const imagePath = req.file.path;
+    console.log("Image Path:", imagePath);
     const result = await validateImageType(imagePath);
 
     if (!result.ok) {
@@ -79,10 +80,14 @@ const createThread = async (req, res) => {
       return res.status(400).json({ error: "Invalid file format." });
     }
 
+    console.log("Image validée avec succès");
+
     const metadata = await getImageMetadata(imagePath);
     const { width, height } = metadata;
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
+
+    console.log("Données métadonnées récupérées");
 
     const thread = await Thread.create({
       opName,
@@ -94,8 +99,12 @@ const createThread = async (req, res) => {
       replies: [],
     });
 
+    console.log("Thread créé");
+
     // Enregistrement du thread
     await thread.save();
+
+    console.log("Thread enregistré avec succès");
 
     // Mettre à jour les propriétés bumpDate et formatedId
     thread.bumpDate = thread.createdAt;
@@ -114,7 +123,7 @@ const createThread = async (req, res) => {
 
     // Envoi de l'image sur S3
     const filename = req.file.originalname;
-    console.log(filename);
+    console.log("Nom de fichier:", filename);
     await s3
       .putObject({
         Body: require("fs").readFileSync(imagePath),
@@ -123,9 +132,13 @@ const createThread = async (req, res) => {
       })
       .promise();
 
+    console.log("Image envoyée avec succès sur S3");
+
     // Mettez à jour le champ image dans la base de données
     thread.image = filename;
     await thread.save();
+
+    console.log("Champ image mis à jour dans la base de données");
 
     // Répondre avec le thread créé
     res.status(200).json(thread);
