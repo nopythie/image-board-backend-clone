@@ -28,7 +28,6 @@ mongoose
   .then(() => {
     app.listen(port, () => {
       console.log(`Serveur lancé.`);
-      console.log(process.env.CYCLIC_BUCKET_NAME);
     });
   })
   .catch((err) => {
