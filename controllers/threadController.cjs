@@ -72,21 +72,6 @@ const createThread = async (req, res) => {
   }
   const imagePath = req.file.path;
 
-  await s3
-    .putObject({
-      Body: JSON.stringify({ key: "value" }),
-      Bucket: process.env.CYCLIC_BUCKET_NAME,
-      Key: `some_files/${imagePath}`,
-    })
-    .promise();
-  const my_file = await s3
-    .getObject({
-      Bucket: process.env.CYCLIC_BUCKET_NAME,
-      Key: `some_files/${imagePath}`,
-    })
-    .promise();
-  console.log(JSON.parse(my_file));
-
   const result = await validateImageType(imagePath);
   if (!result.ok) {
     console.error(result.error);
@@ -97,11 +82,21 @@ const createThread = async (req, res) => {
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
+
+    const uploadParams = {
+      Bucket: process.env.CYCLIC_BUCKET_NAME,
+      Key: `images/${req.file.originalname}`, // Modifiez le chemin selon vos besoins
+      Body: require("fs").createReadStream(imagePath),
+      ACL: "public-read", // Définir les autorisations (modifiable selon vos besoins)
+    };
+
+    const uploadResponse = await s3.upload(uploadParams).promise();
+
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: imagePath,
+      image: uploadResponse.Location,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
