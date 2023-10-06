@@ -1,14 +1,13 @@
 const { validateImageType } = require("../utils/validateImageType.cjs");
 const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
+const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
 const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
-const { Upload } = require("@aws-sdk/lib-storage"),
-  { S3 } = require("@aws-sdk/client-s3");
-const s3 = new S3();
-const fs = require("@cyclic.sh/s3fs")(process.env.CYCLIC_BUCKET_NAME);
 
-const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
+const bodyParser = require("body-parser");
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -83,24 +82,20 @@ const createThread = async (req, res) => {
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
-
-    const uploadParams = {
-      Bucket: process.env.CYCLIC_BUCKET_NAME,
-      Key: `images/${req.file.originalname}`, // Modifiez le chemin selon vos besoins
-      Body: require("fs").createReadStream(imagePath),
-      ACL: "public-read", // Définir les autorisations (modifiable selon vos besoins)
-    };
-
-    const uploadResponse = await new Upload({
-      client: s3,
-      params: uploadParams,
-    }).done();
+    console.log(imagePath);
+    await s3
+      .putObject({
+        Body: JSON.stringify(imagePath),
+        Bucket: process.env.BUCKET,
+        Key: imagePath,
+      })
+      .promise();
 
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: uploadResponse.Location,
+      image: imagePath,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
