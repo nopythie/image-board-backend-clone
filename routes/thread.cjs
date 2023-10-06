@@ -1,6 +1,9 @@
 const express = require("express");
 require("dotenv").config();
 const multer = require("multer");
+const { S3Client } = require("@aws-sdk/client-s3");
+const multerS3 = require("multer-s3");
+const s3 = new S3Client();
 const router = express.Router();
 const {
   getThreads,
@@ -8,17 +11,18 @@ const {
   createThread,
   createReply,
 } = require("../controllers/threadController.cjs");
-console.log("pas ok");
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./public/images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
+const upload = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.CYCLIC_BUCKET_NAME,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString());
+    },
+  }),
 });
-console.log("ok");
-const upload = multer({ storage: storage });
 
 // GET every threads
 router.get("/", getThreads);
