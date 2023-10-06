@@ -83,9 +83,9 @@ const createThread = async (req, res) => {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
 
-    let filename = req.path.slice(1);
+    let filename = req.file.path.slice(1);
 
-    console.log(typeof req.body);
+    console.log(filename);
 
     await s3
       .putObject({
@@ -102,7 +102,7 @@ const createThread = async (req, res) => {
       opName,
       subject,
       comment,
-      image: imagePath,
+      image: filename,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
