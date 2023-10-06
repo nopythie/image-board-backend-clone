@@ -24,8 +24,6 @@ const upload = multer({
   }),
 });
 
-console.log(s3);
-
 // GET every threads
 router.get("/", getThreads);
 
