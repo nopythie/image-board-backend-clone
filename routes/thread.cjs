@@ -11,6 +11,7 @@ const {
 } = require("../controllers/threadController.cjs");
 const AWS = require("aws-sdk");
 const s3 = new AWS.S3();
+console.log("S3 en place");
 const upload = multer({
   storage: multerS3({
     s3: s3,
@@ -20,6 +21,7 @@ const upload = multer({
     },
   }),
 });
+console.log("upload en place");
 // GET every threads
 router.get("/", getThreads);
 
