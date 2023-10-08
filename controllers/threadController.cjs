@@ -73,7 +73,7 @@ const createThread = async (req, res) => {
   console.log(`req.file :`);
   console.log(req.file);
 
-  const imagePath = req.file.location;
+  const imagePath = req.file.key;
   console.log(`imagePath :`);
   console.log(imagePath);
 
