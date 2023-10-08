@@ -69,7 +69,7 @@ const downloadImageFromS3 = async (imagePath) => {
   };
 
   try {
-    const data = await s3.getObject(params).promise();
+    const data = await s3.send(new GetObjectCommand(params));
     return data.Body;
   } catch (error) {
     console.error(
