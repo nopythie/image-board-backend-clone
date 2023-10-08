@@ -1,4 +1,4 @@
-import { validateMIMEType } from "validate-image-type";
+const { validateMIMEType } = require("validate-image-type");
 import { fileTypeFromBuffer } from "file-type";
 
 async function validateImageType(path) {
