@@ -26,7 +26,7 @@ const upload = multer({
   }),
 });
 
-listObjects(s3, bucketName);
+listObjects(bucketName);
 
 // GET every threads
 router.get("/", getThreads);

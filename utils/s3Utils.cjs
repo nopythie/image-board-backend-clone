@@ -2,8 +2,11 @@ const {
   ListObjectsCommand,
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
+const bucketName = process.env.CYCLIC_BUCKET_NAME;
+const AWS = require("aws-sdk");
+const s3 = new AWS.S3();
 
-const deleteObjects = async (s3, bucketName) => {
+const deleteObjects = async (bucketName) => {
   try {
     // Liste tous les objets dans le bucket
     const data = await s3.send(new ListObjectsCommand({ Bucket: bucketName }));
@@ -26,7 +29,7 @@ const deleteObjects = async (s3, bucketName) => {
   }
 };
 
-const listObjects = async (s3, bucketName) => {
+const listObjects = async () => {
   const params = {
     Bucket: bucketName,
   };
@@ -43,7 +46,26 @@ const listObjects = async (s3, bucketName) => {
   }
 };
 
+const downloadImageFromS3 = async (imagePath) => {
+  const params = {
+    Bucket: bucketName,
+    Key: imagePath,
+  };
+
+  try {
+    const data = await s3.getObject(params).promise();
+    return data.Body;
+  } catch (error) {
+    console.error(
+      "Erreur lors du téléchargement de l'image depuis S3 :",
+      error
+    );
+    throw new Error("Impossible de télécharger l'image depuis S3");
+  }
+};
+
 module.exports = {
   deleteObjects,
   listObjects,
+  downloadImageFromS3,
 };

@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const { Thread, Reply } = require("../models/threadModel.cjs");
 require("dotenv").config();
 const fs = require("@cyclic.sh/s3fs");
+const { downloadImageFromS3 } = require("../utils/s3Utils.cjs");
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -68,15 +69,22 @@ const createThread = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
-  console.log(`Request : ${req}`);
+  console.log(`Request :`);
+  console.log(req);
   const imagePath = req.file.location;
-  console.log(`imagePath : ${imagePath}`);
-  const result = await validateImageType(imagePath);
+  console.log(`imagePath :`);
+  console.log(imagePath);
+
+  // Télécharger l'image depuis S3
+  const imageBuffer = await downloadImageFromS3(imagePath);
+
+  // Valider le type d'image
+  const result = await validateImageType(imageBuffer);
   if (!result.ok) {
     console.error(result.error);
     return res.status(400).json({ error: "Invalid file format." });
   }
-  const metadata = await getImageMetadata(imagePath);
+  const metadata = await getImageMetadata(imageBuffer);
   const { width, height } = metadata;
   try {
     const { opName, subject, comment } = req.body;
@@ -105,7 +113,7 @@ const createThread = async (req, res) => {
     res.status(200).json(thread);
   } catch (error) {
     console.log(error);
-    return res.status(400).json({ error: error.message + ", pas cool" });
+    return res.status(400).json({ error: error.message });
   }
 };
 
