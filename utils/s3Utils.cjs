@@ -3,8 +3,8 @@ const {
   DeleteObjectCommand,
 } = require("@aws-sdk/client-s3");
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
-const AWS = require("aws-sdk");
-const s3 = new AWS.S3();
+const { S3Client } = require("@aws-sdk/client-s3");
+const s3 = new S3Client();
 
 const deleteObjects = async (bucketName) => {
   try {
