@@ -1,4 +1,4 @@
-const { validateImageType } = require("../utils/validateImageType.cjs");
+const { validateImageType } = require("../utils/validateImageType.js");
 const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
 const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
 const mongoose = require("mongoose");
