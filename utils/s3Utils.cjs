@@ -88,7 +88,7 @@ const downloadImageFromS3 = async (imagePath) => {
     const response = await s3.send(new GetObjectCommand(params));
     const buffer = await streamToBuffer(response.Body);
     console.log("Image Data:", buffer);
-    return buffer;
+    return buffer.toString("base64");
   } catch (error) {
     console.error(
       "Erreur lors du téléchargement de l'image depuis S3 :",

@@ -1,22 +1,16 @@
-const imageType = require("image-type");
+const { validateMIMEType } = require("validate-image-type");
 
-function validateImageType(buffer) {
-  const type = imageType(buffer);
-
-  if (type) {
-    const mimeTypes = [
+async function validateImageType(path) {
+  const result = await validateMIMEType(path, {
+    allowMimeTypes: [
       "image/jpeg",
       "image/gif",
       "image/png",
       "image/jpg",
       "image/svg+xml",
-    ];
-    if (mimeTypes.includes(type.mime)) {
-      return { ok: true, type: type.mime };
-    }
-  }
-
-  return { ok: false, error: "Invalid image type." };
+    ],
+  });
+  return result;
 }
 
 module.exports = { validateImageType };
