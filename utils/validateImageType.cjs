@@ -1,6 +1,7 @@
 const { validateMIMEType } = require("validate-image-type");
-const imageType = require("image-type");
+import { fileTypeFromBuffer } from "file-type";
 async function validateImageType(path) {
+  console.log(await fileTypeFromBuffer(path));
   const buffer = imageType(path);
   const result = await validateMIMEType(buffer, {
     allowMimeTypes: [
