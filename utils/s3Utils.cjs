@@ -1,12 +1,27 @@
 const {
   ListObjectsCommand,
   DeleteObjectCommand,
+  S3Client,
 } = require("@aws-sdk/client-s3");
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
-const { S3Client } = require("@aws-sdk/client-s3");
 const s3 = new S3Client();
 
-const deleteObjects = async (bucketName) => {
+const multer = require("multer");
+const multerS3 = require("multer-s3");
+const uploadMulter = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: bucketName,
+    metadata: function (req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: function (req, file, cb) {
+      cb(null, Date.now().toString());
+    },
+  }),
+});
+
+const deleteObjects = async () => {
   try {
     // Liste tous les objets dans le bucket
     const data = await s3.send(new ListObjectsCommand({ Bucket: bucketName }));
@@ -68,4 +83,5 @@ module.exports = {
   deleteObjects,
   listObjects,
   downloadImageFromS3,
+  uploadMulter,
 };
