@@ -4,6 +4,7 @@ const {
   S3Client,
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
+const { Readable } = require("stream");
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const s3 = new S3Client();
 
@@ -62,6 +63,21 @@ const listObjects = async () => {
   }
 };
 
+const streamToBuffer = async (stream) => {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    stream.on("data", (chunk) => {
+      chunks.push(chunk);
+    });
+    stream.on("end", () => {
+      resolve(Buffer.concat(chunks));
+    });
+    stream.on("error", (error) => {
+      reject(error);
+    });
+  });
+};
+
 const downloadImageFromS3 = async (imagePath) => {
   const params = {
     Bucket: bucketName,
@@ -69,9 +85,10 @@ const downloadImageFromS3 = async (imagePath) => {
   };
 
   try {
-    const data = await s3.send(new GetObjectCommand(params));
-    console.log("Image Data:", data.Body); // Ajout de ce log
-    return data.Body;
+    const response = await s3.send(new GetObjectCommand(params));
+    const buffer = await streamToBuffer(response.Body);
+    console.log("Image Data:", buffer);
+    return buffer;
   } catch (error) {
     console.error(
       "Erreur lors du téléchargement de l'image depuis S3 :",
