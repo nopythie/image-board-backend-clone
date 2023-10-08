@@ -69,8 +69,7 @@ const createThread = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
-  console.log(`Request :`);
-  console.log(req);
+
   const imagePath = req.file.location;
   console.log(`imagePath :`);
   console.log(imagePath);

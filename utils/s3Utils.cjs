@@ -2,6 +2,7 @@ const {
   ListObjectsCommand,
   DeleteObjectCommand,
   S3Client,
+  GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const s3 = new S3Client();
