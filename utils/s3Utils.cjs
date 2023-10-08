@@ -70,6 +70,7 @@ const downloadImageFromS3 = async (imagePath) => {
 
   try {
     const data = await s3.send(new GetObjectCommand(params));
+    console.log("Image Data:", data.Body); // Ajout de ce log
     return data.Body;
   } catch (error) {
     console.error(

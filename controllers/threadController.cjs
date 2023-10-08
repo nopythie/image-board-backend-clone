@@ -79,6 +79,7 @@ const createThread = async (req, res) => {
 
   // Télécharger l'image depuis S3
   const imageBuffer = await downloadImageFromS3(imagePath);
+  console.log(imageBuffer);
 
   // Valider le type d'image
   const result = await validateImageType(imageBuffer);
