@@ -197,10 +197,4 @@ const createReply = async (req, res) => {
   }
 };
 
-export default {
-  getThreads,
-  getSingleThread,
-  createThread,
-  createReply,
-  getImage,
-};
+export { getThreads, getSingleThread, createThread, createReply, getImage };
