@@ -35,31 +35,19 @@ const getSingleThread = async (req, res) => {
 
 //GET images
 const getImage = async (req, res) => {
-  const { id } = req.params; // L'ID du thread
-  console.log("Thread ID");
-  console.log(id);
+  const { id } = req.params;
+
   try {
-    // Récupérez le thread depuis la base de données
     const thread = await Thread.findById(id);
-    console.log("thread.image");
-    console.log(thread.image);
+
     if (!thread || !thread.image) {
       return res.status(404).send("Thread or image not found");
     }
 
-    // Téléchargez l'image depuis S3
     const imageBuffer = await downloadImageFromS3(thread.image);
-    console.log("Buffer");
-    console.log(imageBuffer);
-    // Traitez l'image
-    const webpBuffer = await sharp(imageBuffer)
-      .webp({ quality: 85 })
-      .toBuffer();
-    console.log("webpBuffer");
-    console.log(webpBuffer);
-    // Renvoyez l'image au format WebP
-    res.setHeader("Content-Type", "image/webp");
-    res.status(200).send(webpBuffer);
+
+    res.setHeader("Content-Type", "image/jpeg"); // Définissez le type de contenu en fonction du format de l'image
+    res.status(200).send(imageBuffer);
   } catch (error) {
     console.error(error);
     res.status(500).send("Erreur lors du traitement de l'image.");
