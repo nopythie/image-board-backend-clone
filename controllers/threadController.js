@@ -35,10 +35,13 @@ const getSingleThread = async (req, res) => {
 //GET images
 const getImage = async (req, res) => {
   const { threadId } = req.params; // L'ID du thread
+  console.log("Thread ID");
+  console.log(threadId);
   try {
     // Récupérez le thread depuis la base de données
     const thread = await Thread.findById(threadId);
-
+    console.log("thread.image");
+    console.log(thread.image);
     if (!thread || !thread.image) {
       return res.status(404).send("Thread or image not found");
     }
