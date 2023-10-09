@@ -11,6 +11,7 @@ import {
   createReply,
 } from "../controllers/threadController.js";
 
+deleteObjects();
 listObjects();
 
 // GET every threads
