@@ -1,15 +1,15 @@
-const {
+import {
   ListObjectsCommand,
   DeleteObjectCommand,
   S3Client,
   GetObjectCommand,
-} = require("@aws-sdk/client-s3");
-const { Readable } = require("stream");
+} from "@aws-sdk/client-s3";
+import { Readable } from "stream";
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const s3 = new S3Client();
 
-const multer = require("multer");
-const multerS3 = require("multer-s3");
+import multer from "multer";
+import multerS3 from "multer-s3";
 const uploadMulter = multer({
   storage: multerS3({
     s3: s3,
@@ -98,7 +98,7 @@ const downloadImageFromS3 = async (imagePath) => {
   }
 };
 
-module.exports = {
+export default {
   deleteObjects,
   listObjects,
   downloadImageFromS3,

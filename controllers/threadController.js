@@ -1,11 +1,11 @@
-const { validateImageType } = require("../utils/validateImageType.mjs");
-const { getImageMetadata } = require("../utils/getImageMetadata.cjs");
-const { uniqueIdGeneration } = require("../utils/uniqueIdGeneration.cjs");
-const mongoose = require("mongoose");
-const { Thread, Reply } = require("../models/threadModel.cjs");
+import { validateImageType } from "../utils/validateImageType.js";
+import { getImageMetadata } from "../utils/getImageMetadata.js";
+import { uniqueIdGeneration } from "../utils/uniqueIdGeneration.js";
+import { Types } from "mongoose";
+import { Thread, Reply } from "../models/threadModel.js";
 require("dotenv").config();
-const fs = require("@cyclic.sh/s3fs");
-const { downloadImageFromS3 } = require("../utils/s3Utils.cjs");
+import { readFile } from "@cyclic.sh/s3fs";
+import { downloadImageFromS3 } from "../utils/s3Utils.js";
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -19,7 +19,7 @@ const getThreads = async (req, res) => {
 // GET one thread
 const getSingleThread = async (req, res) => {
   const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "No such thread" });
   }
   const thread = await Thread.findById(id).populate("replies");
@@ -34,7 +34,7 @@ const getSingleThread = async (req, res) => {
 //GET images
 const getImage = async (req, res) => {
   const { imagePath } = req.params;
-  fs.readFile(imagePath, async function (err, imageBuffer) {
+  readFile(imagePath, async function (err, imageBuffer) {
     if (err) {
       res.writeHead(400);
       console.log(err);
@@ -139,7 +139,7 @@ const createReply = async (req, res) => {
   size = req.file ? req.file.size : 0;
   // Test ID
   const { id } = req.params;
-  if (!mongoose.Types.ObjectId.isValid(id)) {
+  if (!Types.ObjectId.isValid(id)) {
     return res.status(404).json({ error: "bad ID" });
   }
   //Creation de la réponse
@@ -196,7 +196,7 @@ const createReply = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   getThreads,
   getSingleThread,
   createThread,

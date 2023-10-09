@@ -1,9 +1,9 @@
-const { fileTypeFromBuffer } = require("file-type");
+import { fileTypeFromBuffer } from "file-type";
 async function validateImageType(path) {
   console.log(await fileTypeFromBuffer(path));
 }
 
-module.exports = { validateImageType };
+export default { validateImageType };
 /* async function validateImageType(path) {
 
   const buffer = imageType(path);
