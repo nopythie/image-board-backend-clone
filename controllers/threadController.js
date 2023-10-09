@@ -3,7 +3,7 @@ import getImageMetadata from "../utils/getImageMetadata.js";
 import { uniqueIdGeneration } from "../utils/uniqueIdGeneration.js";
 import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
-require("dotenv").config();
+import "dotenv/config";
 import cyclic from "@cyclic.sh/s3fs";
 const { readFile } = cyclic;
 import { downloadImageFromS3 } from "../utils/s3Utils.js";

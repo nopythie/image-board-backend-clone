@@ -1,6 +1,5 @@
 import { Router } from "express";
-require("dotenv").config();
-
+import "dotenv/config";
 import { deleteObjects, listObjects, uploadMulter } from "../utils/s3Utils.js";
 
 const router = Router();
