@@ -17,10 +17,6 @@ app.use(compression());
 app.use(json());
 
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  next();
-});
-app.use((req, res, next) => {
   console.log(req.path, req.method);
   next();
 });
