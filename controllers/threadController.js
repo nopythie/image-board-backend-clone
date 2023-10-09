@@ -49,12 +49,13 @@ const getImage = async (req, res) => {
 
     // Téléchargez l'image depuis S3
     const imageBuffer = await downloadImageFromS3(thread.image);
-
+    console.log("Buffer");
     console.log(imageBuffer);
     // Traitez l'image
     const webpBuffer = await sharp(imageBuffer)
       .webp({ quality: 85 })
       .toBuffer();
+    console.log("webpBuffer");
     console.log(webpBuffer);
     // Renvoyez l'image au format WebP
     res.setHeader("Content-Type", "image/webp");
