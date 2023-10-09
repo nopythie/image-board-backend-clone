@@ -45,10 +45,12 @@ const getImage = async (req, res) => {
     }
 
     const imageBuffer = await downloadImageFromS3(thread.image);
-    const contentType = req.headers["content-type"]; // Récupérez le type de contenu de l'image
+    const contentType = req.headers["content-type"];
+    console.log("req");
+    console.log(req);
 
     if (contentType) {
-      res.setHeader("Content-Type", contentType); // Définissez le type de contenu en fonction du type de l'image
+      res.setHeader("Content-Type", contentType);
     }
     res.status(200).send(imageBuffer);
   } catch (error) {
