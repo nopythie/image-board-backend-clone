@@ -1,4 +1,4 @@
-import validateImageType from "../utils/validateImageType.js";
+import { validateImageType, getImageType } from "../utils/validateImageType.js";
 import getImageMetadata from "../utils/getImageMetadata.js";
 import uniqueIdGeneration from "../utils/uniqueIdGeneration.js";
 import sharp from "sharp";
