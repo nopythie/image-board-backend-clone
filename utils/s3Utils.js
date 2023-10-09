@@ -97,4 +97,19 @@ const downloadImageFromS3 = async (imageKey) => {
   }
 };
 
-export { deleteObjects, listObjects, downloadImageFromS3, uploadMulter };
+async function getImageUrl(imageKey) {
+  const getObjectCommand = new GetObjectCommand({
+    Bucket: bucketName,
+    Key: imageKey,
+  });
+
+  return await getSignedUrl(s3, getObjectCommand, { expiresIn: 60 });
+}
+
+export {
+  deleteObjects,
+  listObjects,
+  downloadImageFromS3,
+  uploadMulter,
+  getImageUrl,
+};

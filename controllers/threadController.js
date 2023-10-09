@@ -7,7 +7,7 @@ import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
 import cyclic from "@cyclic.sh/s3fs";
 const { readFile } = cyclic;
-import { downloadImageFromS3 } from "../utils/s3Utils.js";
+import { downloadImageFromS3, getImageUrl } from "../utils/s3Utils.js";
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -80,14 +80,16 @@ const createThread = async (req, res) => {
   }
   const metadata = await getImageMetadata(imageBuffer);
   const { width, height } = metadata;
+
   try {
+    const imageUrl = getImageUrl(imageKey);
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: req.file.location,
+      image: imageUrl,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
