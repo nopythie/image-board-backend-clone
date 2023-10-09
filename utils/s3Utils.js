@@ -4,7 +4,6 @@ import {
   S3Client,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { Readable } from "stream";
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const s3 = new S3Client();
 
@@ -55,7 +54,7 @@ const listObjects = async () => {
     const data = await s3.send(command);
     console.log("Objets dans le bucket:");
     data.Contents.forEach((object) => {
-      console.log(object.Key);
+      /*       console.log(object.Key); */
     });
   } catch (error) {
     console.error(error);
@@ -78,10 +77,10 @@ const streamToBuffer = async (stream) => {
   });
 };
 
-const downloadImageFromS3 = async (imagePath) => {
+const downloadImageFromS3 = async (imageKey) => {
   const params = {
     Bucket: bucketName,
-    Key: imagePath,
+    Key: imageKey,
   };
 
   try {

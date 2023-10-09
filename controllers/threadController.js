@@ -62,10 +62,10 @@ const createThread = async (req, res) => {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
 
-  const imagePath = req.file.key;
+  const imageKey = req.file.key;
 
   // Télécharger l'image depuis S3
-  const imageBuffer = await downloadImageFromS3(imagePath);
+  const imageBuffer = await downloadImageFromS3(imageKey);
 
   // Valider le type d'image
   const isValidImage = await validateImageType(imageBuffer);
