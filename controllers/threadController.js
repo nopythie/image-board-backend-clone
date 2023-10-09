@@ -4,7 +4,8 @@ import { uniqueIdGeneration } from "../utils/uniqueIdGeneration.js";
 import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 require("dotenv").config();
-import { readFile } from "@cyclic.sh/s3fs";
+import cyclic from "@cyclic.sh/s3fs";
+const { readFile } = cyclic;
 import { downloadImageFromS3 } from "../utils/s3Utils.js";
 
 // GET every threads
