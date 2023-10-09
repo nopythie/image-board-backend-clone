@@ -5,7 +5,7 @@ import { deleteObjects, listObjects, uploadMulter } from "../utils/s3Utils.js";
 const router = Router();
 import {
   getThreads,
-  getImage,
+  /*   getImage, */
   getSingleThread,
   createThread,
   createReply,
