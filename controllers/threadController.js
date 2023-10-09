@@ -62,9 +62,7 @@ const createThread = async (req, res) => {
   }
 
   const imagePath = req.file.key;
-  console.log("image Path", imagePath);
-  const imageLocation = req.file.location;
-  console.log("imageLocation", imageLocation);
+
   // Télécharger l'image depuis S3
   const imageBuffer = await downloadImageFromS3(imagePath);
 
@@ -83,7 +81,7 @@ const createThread = async (req, res) => {
       opName,
       subject,
       comment,
-      image: imageLocation,
+      image: imagePath,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
