@@ -98,8 +98,4 @@ const Counter = mongoose.model("Counter", counterSchema);
 const Thread = mongoose.model("Thread", threadSchema);
 const Reply = mongoose.model("Reply", replySchema);
 
-export default {
-  Thread,
-  Reply,
-  Counter,
-};
+export { Thread, Reply, Counter };
