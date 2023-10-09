@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
 
-import { downloadImageFromS3, getImageUrl } from "../utils/s3Utils.js";
+import { downloadImageFromS3, getS3Image } from "../utils/s3Utils.js";
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -42,26 +42,26 @@ const getImage = async (req, res) => {
       return res.status(404).send("Thread or image not found");
     }
 
-    const imageBuffer = await downloadImageFromS3(thread.image);
-    const contentType = getImageType(thread.image);
+    const s3File = getS3Image(thread.image);
 
-    if (contentType) {
-      res.setHeader("Content-Type", contentType);
-    }
-    res.status(200).send(imageBuffer);
+    res.set("Content-type", s3File.ContentType);
+    res.send(s3File.Body.toString()).end();
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Erreur lors du traitement de l'image.");
+    if (error.code === "NoSuchKey") {
+      console.log(`No such key ${filename}`);
+      res.sendStatus(404).end();
+    } else {
+      console.log(error);
+      res.sendStatus(500).end();
+    }
   }
 };
 
 //POST a thread
 const createThread = async (req, res) => {
-  console.log("lancement de createThread");
   if (!req.file) {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
-
   const imageKey = req.file.key;
   console.log("location");
   console.log(req.file.location);

@@ -102,10 +102,20 @@ function getImageUrl(imageKey) {
   return imageUrl;
 }
 
+const getS3Image = async (image) => {
+  return await s3
+    .getObject({
+      Bucket: process.env.CYCLIC_BUCKET_NAME,
+      Key: image,
+    })
+    .promise();
+};
+
 export {
   deleteObjects,
   listObjects,
   downloadImageFromS3,
   uploadMulter,
   getImageUrl,
+  getS3Image,
 };
