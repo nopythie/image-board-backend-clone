@@ -11,7 +11,6 @@ import multer from "multer";
 import multerS3 from "multer-s3";
 const uploadMulter = multer({
   storage: multerS3({
-    acl: "public-read",
     s3: s3,
     bucket: bucketName,
     metadata: function (req, file, cb) {
