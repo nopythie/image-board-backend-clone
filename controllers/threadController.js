@@ -35,7 +35,8 @@ const getSingleThread = async (req, res) => {
 //GET images
 const getImage = async (req, res) => {
   const { imagePath } = req.params;
-  readFile(imagePath, async function (err, imageBuffer) {
+  const fullPath = `https://cyclic-wandering-raincoat-bat-eu-west-1.s3.eu-west-1.amazonaws.com/${imagePath}`;
+  readFile(fullPath, async function (err, imageBuffer) {
     if (err) {
       res.writeHead(400);
       console.log(err);
@@ -71,12 +72,7 @@ const createThread = async (req, res) => {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
 
-  console.log(`req.file :`);
-  console.log(req.file);
-
   const imagePath = req.file.key;
-  console.log(`imagePath :`);
-  console.log(imagePath);
 
   // Télécharger l'image depuis S3
   const imageBuffer = await downloadImageFromS3(imagePath);
@@ -89,7 +85,6 @@ const createThread = async (req, res) => {
   }
   const metadata = await getImageMetadata(imageBuffer);
   const { width, height } = metadata;
-  console.log(width, height);
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;

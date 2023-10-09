@@ -11,7 +11,6 @@ const allowedMimeTypes = [
 export default async function validateImageType(imageBuffer) {
   try {
     const fileInfo = await fileTypeFromBuffer(imageBuffer);
-    console.log(fileInfo);
     if (fileInfo && allowedMimeTypes.includes(fileInfo.mime)) {
       return true;
     } else {
