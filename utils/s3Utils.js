@@ -103,7 +103,7 @@ async function getImageUrl(imageKey) {
     Key: imageKey,
   });
 
-  return await getSignedUrl(s3, getObjectCommand, { expiresIn: 60 });
+  return await getImageUrl(s3, getObjectCommand, { expiresIn: 60 });
 }
 
 export {
