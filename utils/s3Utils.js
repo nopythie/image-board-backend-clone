@@ -3,9 +3,10 @@ import {
   DeleteObjectCommand,
   S3Client,
   GetObjectCommand,
-} from "aws-sdk";
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
-const s3 = new AWS.S3();
+const s3 = new S3Client();
 
 import multer from "multer";
 import multerS3 from "multer-s3";
@@ -100,7 +101,7 @@ const downloadImageFromS3 = async (imageKey) => {
 function getImageUrl(imageKey) {
   const signedUrlExpireSeconds = 60 * 5; // The URL will expire in 5 minutes
 
-  const url = s3.getSignedUrl("getObject", {
+  const url = getSignedUrl("getObject", {
     Bucket: bucketName,
     Key: imageKey,
     Expires: signedUrlExpireSeconds,
