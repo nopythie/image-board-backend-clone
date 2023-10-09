@@ -87,7 +87,7 @@ const createThread = async (req, res) => {
       opName,
       subject,
       comment,
-      image: imageKey,
+      image: req.file.location,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
