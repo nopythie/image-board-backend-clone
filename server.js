@@ -2,7 +2,7 @@ import compression from "compression";
 import express, { json } from "express";
 require("dotenv").config();
 import { connect } from "mongoose";
-import threadRoutes from "./routes/thread.cjs";
+import threadRoutes from "./routes/thread.js";
 import { join } from "path";
 import cors from "cors";
 const corsOptions = {
