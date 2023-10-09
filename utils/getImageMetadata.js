@@ -10,4 +10,4 @@ async function getImageMetadata(path) {
   }
 }
 
-export { getImageMetadata };
+export default getImageMetadata;
