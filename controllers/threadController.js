@@ -43,7 +43,8 @@ const getImage = async (req, res) => {
     }
 
     const s3File = getS3Image(thread.image);
-
+    console.log("s3File :");
+    console.log(s3File);
     res.set("Content-type", s3File.ContentType);
     res.send(s3File.Body.toString()).end();
   } catch (error) {
