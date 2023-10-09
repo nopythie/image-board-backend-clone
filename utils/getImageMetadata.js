@@ -1,6 +1,6 @@
 const sharp = require("sharp");
 
-export default async function getImageMetadata(path) {
+async function getImageMetadata(path) {
   try {
     const metadata = await sharp(path).metadata();
     return metadata;
@@ -9,3 +9,5 @@ export default async function getImageMetadata(path) {
     throw error;
   }
 }
+
+export { getImageMetadata };

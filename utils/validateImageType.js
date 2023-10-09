@@ -1,7 +1,9 @@
 import { fileTypeFromBuffer } from "file-type";
-export default async function validateImageType(path) {
+async function validateImageType(path) {
   console.log(await fileTypeFromBuffer(path));
 }
+
+export default { validateImageType };
 /* async function validateImageType(path) {
 
   const buffer = imageType(path);
