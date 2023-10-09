@@ -98,9 +98,4 @@ const downloadImageFromS3 = async (imagePath) => {
   }
 };
 
-export default {
-  deleteObjects,
-  listObjects,
-  downloadImageFromS3,
-  uploadMulter,
-};
+export { deleteObjects, listObjects, downloadImageFromS3, uploadMulter };
