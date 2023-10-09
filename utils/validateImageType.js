@@ -1,20 +1,23 @@
 import { fileTypeFromBuffer } from "file-type";
-export default async function validateImageType(path) {
-  console.log("file type :");
-  console.log(await fileTypeFromBuffer(path));
-}
-/* async function validateImageType(path) {
 
-  const buffer = imageType(path);
-  const result = await validateMIMEType(buffer, {
-    allowMimeTypes: [
-      "image/jpeg",
-      "image/gif",
-      "image/png",
-      "image/jpg",
-      "image/svg+xml",
-    ],
-  });
-  return result;
+const allowedMimeTypes = [
+  "image/jpeg",
+  "image/gif",
+  "image/png",
+  "image/jpg",
+  "image/svg+xml",
+];
+
+export default async function validateImageType(path) {
+  try {
+    const fileInfo = await fileTypeFromBuffer(path);
+    if (fileInfo && allowedMimeTypes.includes(fileInfo.mime)) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error validating image type", error);
+    throw error;
+  }
 }
- */
