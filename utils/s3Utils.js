@@ -1,3 +1,4 @@
+import "aws-sdk";
 import {
   ListObjectsCommand,
   DeleteObjectCommand,
