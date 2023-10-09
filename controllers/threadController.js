@@ -39,7 +39,7 @@ const getImage = async (req, res) => {
   try {
     // Téléchargez l'image depuis S3
     const imageBuffer = await downloadImageFromS3(key);
-
+    console.log(imageBuffer);
     // Traitez l'image
     const webpBuffer = await sharp(imageBuffer)
       .webp({ quality: 85 })
