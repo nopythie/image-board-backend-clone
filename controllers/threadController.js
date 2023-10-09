@@ -82,8 +82,8 @@ const createThread = async (req, res) => {
   const imageBuffer = await downloadImageFromS3(imagePath);
 
   // Valider le type d'image
-  const result = await validateImageType(imageBuffer);
-  if (result) {
+  const isValidImage = await validateImageType(imageBuffer);
+  if (!isValidImage) {
     console.error(result.error);
     return res.status(400).json({ error: "Invalid file format." });
   }
