@@ -89,6 +89,7 @@ const createThread = async (req, res) => {
   }
   const metadata = await getImageMetadata(imageBuffer);
   const { width, height } = metadata;
+  console.log(width, height);
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
