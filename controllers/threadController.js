@@ -1,14 +1,13 @@
 import validateImageType from "../utils/validateImageType.js";
 import getImageMetadata from "../utils/getImageMetadata.js";
 import uniqueIdGeneration from "../utils/uniqueIdGeneration.js";
-import sharp from "sharp";
 import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
 import cyclic from "@cyclic.sh/s3fs";
 const { readFile } = cyclic;
 import { downloadImageFromS3 } from "../utils/s3Utils.js";
-
+const bucketName = process.env.CYCLIC_BUCKET_NAME;
 // GET every threads
 const getThreads = async (req, res) => {
   const threads = await Thread.find({}).sort({ bumpDate: -1 });
@@ -86,7 +85,7 @@ const createThread = async (req, res) => {
       opName,
       subject,
       comment,
-      image: imageKey,
+      image: `https://${bucketName}.s3.amazonaws.com/${imageKey}`,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
