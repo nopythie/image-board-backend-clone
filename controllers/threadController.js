@@ -34,6 +34,7 @@ const getSingleThread = async (req, res) => {
 
 //GET images
 const getImage = async (req, res) => {
+  console.log(req);
   const { key } = req.params; // La clé du fichier sur S3
   console.log(key);
   try {
