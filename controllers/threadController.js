@@ -5,11 +5,7 @@ import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
 
-import {
-  downloadImageFromS3,
-  getS3Image,
-  getImageUrl,
-} from "../utils/s3Utils.js";
+import { downloadImageFromS3, getImageUrl } from "../utils/s3Utils.js";
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -68,6 +64,7 @@ const createThread = async (req, res) => {
     return res.status(400).json({ error: "No file has been downloaded." });
   }
   const imageKey = req.file.key;
+  console.log(req.file);
   console.log("location");
   console.log(req.file.location);
   // Télécharger l'image depuis S3
@@ -85,7 +82,7 @@ const createThread = async (req, res) => {
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
-    const imageUrl = getImageUrl(imageKey);
+    const imageUrl = `${getImageUrl(imageKey)}${getImageType}`;
     console.log("url :");
     console.log(imageUrl);
     const thread = await Thread.create({

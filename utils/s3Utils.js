@@ -98,7 +98,7 @@ const downloadImageFromS3 = async (imageKey) => {
 };
 
 function getImageUrl(imageKey) {
-  const imageUrl = `${bucketName}/${imageKey}.jpg`;
+  const imageUrl = `${bucketName}/${imageKey}`;
   return imageUrl;
 }
 
