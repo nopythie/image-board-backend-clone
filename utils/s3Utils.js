@@ -1,11 +1,9 @@
-import "aws-sdk";
 import {
   ListObjectsCommand,
   DeleteObjectCommand,
   S3Client,
   GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 const bucketName = process.env.CYCLIC_BUCKET_NAME;
 const s3 = new S3Client();
 
@@ -100,25 +98,9 @@ const downloadImageFromS3 = async (imageKey) => {
 };
 
 function getImageUrl(imageKey) {
-  const signedUrlExpireSeconds = 60 * 5; // The URL will expire in 5 minutes
-
-  const url = getSignedUrl("getObject", {
-    Bucket: bucketName,
-    Key: imageKey,
-    Expires: signedUrlExpireSeconds,
-  });
-
-  console.log("The URL is", url);
+  const imageUrl = `${bucketName}/${imageKey}.jpg`;
+  return imageUrl;
 }
-
-const getS3Image = async (image) => {
-  return await s3
-    .getObject({
-      Bucket: process.env.CYCLIC_BUCKET_NAME,
-      Key: image,
-    })
-    .promise();
-};
 
 export {
   deleteObjects,
@@ -126,5 +108,4 @@ export {
   downloadImageFromS3,
   uploadMulter,
   getImageUrl,
-  getS3Image,
 };
