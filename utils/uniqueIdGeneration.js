@@ -1,6 +1,6 @@
-const { Counter } = require("../models/threadModel.js");
+import { Counter } from "../models/threadModel.js";
 
-async function uniqueIdGeneration() {
+export default async function uniqueIdGeneration() {
   const idLength = 8;
   const counter = await Counter.findOneAndUpdate(
     {},
@@ -11,5 +11,3 @@ async function uniqueIdGeneration() {
   const newId = counter.value.toString().padStart(idLength, "0");
   return newId;
 }
-
-module.exports = { uniqueIdGeneration };
