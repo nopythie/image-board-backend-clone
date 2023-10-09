@@ -34,13 +34,17 @@ const getSingleThread = async (req, res) => {
 
 //GET images
 const getImage = async (req, res) => {
-  const { key } = req.params; // La clé du fichier sur S3
-  console.log("key : ");
-  console.log(key);
+  const { threadId } = req.params; // L'ID du thread
   try {
+    // Récupérez le thread depuis la base de données
+    const thread = await Thread.findById(threadId);
+
+    if (!thread || !thread.image) {
+      return res.status(404).send("Thread or image not found");
+    }
+
     // Téléchargez l'image depuis S3
-    const imageBuffer = await downloadImageFromS3(key);
-    console.log("buffer : ");
+    const imageBuffer = await downloadImageFromS3(thread.image);
 
     console.log(imageBuffer);
     // Traitez l'image
