@@ -58,7 +58,7 @@ const getImage = async (req, res) => {
     console.log(webpBuffer);
     // Renvoyez l'image au format WebP
     res.setHeader("Content-Type", "image/webp");
-    res.status(200).send(webpBuffer);
+    res.status(200).end(webpBuffer);
   } catch (error) {
     console.error(error);
     res.status(500).send("Erreur lors du traitement de l'image.");
