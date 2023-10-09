@@ -34,35 +34,24 @@ const getSingleThread = async (req, res) => {
 
 //GET images
 const getImage = async (req, res) => {
-  const { imagePath } = req.params;
-  const fullPath = `https://cyclic-wandering-raincoat-bat-eu-west-1.s3.eu-west-1.amazonaws.com/${imagePath}`;
-  readFile(fullPath, async function (err, imageBuffer) {
-    if (err) {
-      res.writeHead(400);
-      console.log(err);
-      res.end("No such image");
-    } else {
-      try {
-        if (imagePath.endsWith(".jpg") || imagePath.endsWith(".jpeg")) {
-          const jpegBuffer = await sharp(imageBuffer)
-            .jpeg({ quality: 85 })
-            .toBuffer();
-          const webpBuffer = await sharp(jpegBuffer).webp().toBuffer();
+  const { key } = req.params; // La clé du fichier sur S3
 
-          res.setHeader("Content-Type", "image/webp");
-          res.writeHead(200);
-          res.end(webpBuffer);
-        } else {
-          res.writeHead(200);
-          res.end(imageBuffer);
-        }
-      } catch (err) {
-        console.error(err);
-        res.writeHead(500);
-        res.end("Failed to process the image.");
-      }
-    }
-  });
+  try {
+    // Téléchargez l'image depuis S3
+    const imageBuffer = await downloadImageFromS3(key);
+
+    // Traitez l'image
+    const webpBuffer = await sharp(imageBuffer)
+      .webp({ quality: 85 })
+      .toBuffer();
+
+    // Renvoyez l'image au format WebP
+    res.setHeader("Content-Type", "image/webp");
+    res.status(200).send(webpBuffer);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erreur lors du traitement de l'image.");
+  }
 };
 
 //POST a thread
