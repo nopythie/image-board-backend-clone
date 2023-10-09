@@ -83,8 +83,7 @@ const createThread = async (req, res) => {
 
   // Valider le type d'image
   const result = await validateImageType(imageBuffer);
-  console.log(result);
-  if (!result.ok) {
+  if (result) {
     console.error(result.error);
     return res.status(400).json({ error: "Invalid file format." });
   }
