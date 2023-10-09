@@ -1,11 +1,9 @@
 import { validateImageType, getImageType } from "../utils/validateImageType.js";
 import getImageMetadata from "../utils/getImageMetadata.js";
 import uniqueIdGeneration from "../utils/uniqueIdGeneration.js";
-import sharp from "sharp";
 import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
-import cyclic from "@cyclic.sh/s3fs"(CYCLIC_BUCKET_NAME);
 
 import { downloadImageFromS3, getImageUrl } from "../utils/s3Utils.js";
 
@@ -34,7 +32,7 @@ const getSingleThread = async (req, res) => {
 };
 
 //GET images
- const getImage = async (req, res) => {
+const getImage = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -45,8 +43,7 @@ const getSingleThread = async (req, res) => {
     }
 
     const imageBuffer = await downloadImageFromS3(thread.image);
-    const contentType = getImageUrl(thread.image);
-
+    const contentType = getImageType(thread.image);
 
     if (contentType) {
       res.setHeader("Content-Type", contentType);
@@ -188,9 +185,4 @@ const createReply = async (req, res) => {
   }
 };
 
-export {
-  getThreads,
-  getSingleThread,
-  createThread,
-  createReply ,getImage ,
-};
+export { getThreads, getSingleThread, createThread, createReply, getImage };
