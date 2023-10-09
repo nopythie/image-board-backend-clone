@@ -8,7 +8,12 @@ const allowedMimeTypes = [
   "image/svg+xml",
 ];
 
-export default async function validateImageType(imageBuffer) {
+async function getImageType(imageBuffer) {
+  const fileInfo = await fileTypeFromBuffer(imageBuffer);
+  return fileInfo.mime;
+}
+
+async function validateImageType(imageBuffer) {
   try {
     const fileInfo = await fileTypeFromBuffer(imageBuffer);
     if (fileInfo && allowedMimeTypes.includes(fileInfo.mime)) {
@@ -21,3 +26,5 @@ export default async function validateImageType(imageBuffer) {
     throw error;
   }
 }
+
+export { validateImageType, getImageType };

@@ -1,4 +1,4 @@
-import validateImageType from "../utils/validateImageType.js";
+import { validateImageType, getImageType } from "../utils/validateImageType.js";
 import getImageMetadata from "../utils/getImageMetadata.js";
 import uniqueIdGeneration from "../utils/uniqueIdGeneration.js";
 import sharp from "sharp";
@@ -63,7 +63,7 @@ const getSingleThread = async (req, res) => {
 const createThread = async (req, res) => {
   console.log("lancement de createThread");
   if (!req.file) {
-    return res.status(400).json({ error: "No file has been downloaded." });
+    return res.status(400).json({ error: "No file has been uploaded." });
   }
 
   const imageKey = req.file.key;
@@ -82,19 +82,22 @@ const createThread = async (req, res) => {
   const { width, height } = metadata;
 
   try {
-    const imageUrl = getImageUrl(imageKey);
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
+    const imageType = getImageType(imageBuffer);
+
+    // Enregistrez l'image comme données binaires dans la base de données
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: imageUrl,
+      image: imageBuffer, // Stocke l'image sous forme de buffer
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
       replies: [],
     });
+
     await thread.save();
     thread.bumpDate = thread.createdAt;
     thread.formatedId = await uniqueIdGeneration();
@@ -106,7 +109,10 @@ const createThread = async (req, res) => {
       await Thread.findByIdAndDelete(allThreads[0]._id);
     }
 
-    res.status(200).json(thread);
+    // Envoyer l'image en tant que réponse HTTP
+    res.set("Content-Type", `${imageType}`); // Remplacez 'jpeg' par le format approprié si nécessaire
+    console.log(res.send);
+    res.send(imageBuffer);
   } catch (error) {
     console.log(error);
     return res.status(400).json({ error: error.message });

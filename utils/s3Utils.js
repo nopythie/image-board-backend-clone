@@ -97,13 +97,9 @@ const downloadImageFromS3 = async (imageKey) => {
   }
 };
 
-async function getImageUrl(imageKey) {
-  const getObjectCommand = new GetObjectCommand({
-    Bucket: bucketName,
-    Key: imageKey,
-  });
-
-  return await getImageUrl(s3, getObjectCommand, { expiresIn: 60 });
+function getImageUrl(imageKey) {
+  const imageUrl = `${bucketName}/${imageKey}.jpg`;
+  return imageUrl;
 }
 
 export {
