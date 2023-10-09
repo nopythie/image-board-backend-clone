@@ -55,7 +55,7 @@ const getImage = async (req, res) => {
     const webpBuffer = await sharp(imageBuffer)
       .webp({ quality: 85 })
       .toBuffer();
-
+    console.log(webpBuffer);
     // Renvoyez l'image au format WebP
     res.setHeader("Content-Type", "image/webp");
     res.status(200).send(webpBuffer);
