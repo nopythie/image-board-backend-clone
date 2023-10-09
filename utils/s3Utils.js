@@ -98,8 +98,15 @@ const downloadImageFromS3 = async (imageKey) => {
 };
 
 function getImageUrl(imageKey) {
-  const imageUrl = `${bucketName}/${imageKey}.jpg`;
-  return imageUrl;
+  const signedUrlExpireSeconds = 60 * 5; // The URL will expire in 5 minutes
+
+  const url = s3.getSignedUrl("getObject", {
+    Bucket: bucketName,
+    Key: imageKey,
+    Expires: signedUrlExpireSeconds,
+  });
+
+  console.log("The URL is", url);
 }
 
 const getS3Image = async (image) => {

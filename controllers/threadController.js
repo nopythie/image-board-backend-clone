@@ -5,7 +5,11 @@ import { Types } from "mongoose";
 import { Thread, Reply } from "../models/threadModel.js";
 import "dotenv/config";
 
-import { downloadImageFromS3, getS3Image } from "../utils/s3Utils.js";
+import {
+  downloadImageFromS3,
+  getS3Image,
+  getImageUrl,
+} from "../utils/s3Utils.js";
 
 // GET every threads
 const getThreads = async (req, res) => {
@@ -81,11 +85,14 @@ const createThread = async (req, res) => {
   try {
     const { opName, subject, comment } = req.body;
     const { size } = req.file;
+    const imageUrl = getImageUrl(imageKey);
+    console.log("url :");
+    console.log(imageUrl);
     const thread = await Thread.create({
       opName,
       subject,
       comment,
-      image: req.file.location,
+      image: imageUrl,
       imageWidth: width,
       imageHeight: height,
       imageSize: Math.floor(size / 1000),
