@@ -35,7 +35,7 @@ const getSingleThread = async (req, res) => {
 //GET images
 const getImage = async (req, res) => {
   const { key } = req.params; // La clé du fichier sur S3
-
+  console.log(key);
   try {
     // Téléchargez l'image depuis S3
     const imageBuffer = await downloadImageFromS3(key);
@@ -62,7 +62,9 @@ const createThread = async (req, res) => {
   }
 
   const imagePath = req.file.key;
+  console.table("image Path", imagePath);
   const imageLocation = req.file.location;
+  console.table("imageLocation", imageLocation);
   // Télécharger l'image depuis S3
   const imageBuffer = await downloadImageFromS3(imagePath);
 
