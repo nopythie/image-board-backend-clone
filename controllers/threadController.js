@@ -34,7 +34,7 @@ const getSingleThread = async (req, res) => {
 };
 
 //GET images
-const getImage = async (req, res) => {
+/* const getImage = async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -57,7 +57,7 @@ const getImage = async (req, res) => {
     console.error(error);
     res.status(500).send("Erreur lors du traitement de l'image.");
   }
-};
+}; */
 
 //POST a thread
 const createThread = async (req, res) => {
